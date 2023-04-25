@@ -1,13 +1,12 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Divider,
   Flex,
   Heading,
   Input,
+  Select,
   Stack,
-  Text,
 } from "@chakra-ui/react";
 
 import { PrimaryButton } from "../atoms/button/PrimaryButton";
@@ -18,33 +17,40 @@ import { useMessage } from "../../hooks/useMessage";
 export const Home = () => {
   const navigate = useNavigate();
 
-  const { getTrafficVolume, totalCars, totalCarType, totalCarDirection } =
-    useTraffic();
+  const { getTrafficVolume } = useTraffic();
   const { showMessage } = useMessage();
 
-  const [date, setDate] = useState(""); //useStateの状態更新は非同期
+  const [location, setLocation] = useState("");
 
-  useEffect(() => {
-    getTrafficVolume({ date });
-  }, [date]);
+  const today = new Date();
+  const [date, setDate] = useState(
+    `${today.getFullYear()}-${(today.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`
+  ); //useStateの状態更新は非同期
 
-  const onChageDate = (e) => {
+  const onChangeDate = (e) => {
     setDate(e.target.value);
+  };
+  const onChangeLocation = (e) => {
+    setLocation(e.target.value);
   };
 
   const onClickGetTrafficVolume = () => {
     if (date === "") {
       showMessage({ title: "日付を入力してください", status: "error" });
-    } else if (totalCars === "") {
-      showMessage({ title: "データがありません", status: "error" });
     } else {
-      navigate("/trafficvolume", {
-        state: {
-          date: date,
-          totalCars: totalCars,
-          totalCarType: totalCarType,
-          totalCarDirection: totalCarDirection,
-        },
+      getTrafficVolume({ date, location }).then((res) => {
+        if (res.length === 0) {
+          showMessage({ title: "データがありません", status: "error" });
+        } else {
+          navigate("/trafficvolume", {
+            state: {
+              date: date,
+              data: res,
+            },
+          });
+        }
       });
     }
   };
@@ -57,7 +63,12 @@ export const Home = () => {
         </Heading>
         <Divider my={4} />
         <Stack spacing={6} py={4} px={10}>
-          <Input type="date" value={date} onChange={onChageDate} />
+          <Select placeholder="地点を選択" onChange={onChangeLocation}>
+            <option value="jetson_orin">宇部道路</option>
+            <option value="k">工学部前</option>
+            <option value="i">医学部前</option>
+          </Select>
+          <Input type="date" value={date} onChange={onChangeDate} />
           <PrimaryButton onClick={onClickGetTrafficVolume}>検索</PrimaryButton>
         </Stack>
       </Box>

@@ -2,30 +2,30 @@ import axios from "axios";
 import { useCallback, useState } from "react";
 
 export const useTraffic = () => {
-  const [totalCars, setTotalCars] = useState("");
-  const [totalCarType, setTotalCarType] = useState([]);
-  const [totalCarDirection, setTotalCarDirection] = useState([]);
-
   const getTrafficVolume = useCallback((props) => {
-    const { date } = props;
-    setTotalCarType([]);
-    setTotalCars("");
-    setTotalCarDirection([]);
-    axios
-      .post("http://localhost:3001/api/test", { date: date })
+    const { date, location } = props;
+    const res_data = axios
+      .post("http://localhost:3001/api/test", {
+        date: date,
+        device_id: location,
+      })
       .then((results) => {
-        results.data.forEach((res) => {
-          setTotalCarType((totalCarType) => [...totalCarType, res.car_type]);
-          setTotalCars((totalCars) => res.car_id + 1);
-          setTotalCarDirection((totalCarDirection) => [
-            ...totalCarDirection,
-            res.direction,
-          ]);
-        });
+        return results.data;
       })
       .catch(() => {
-        alert("失敗");
+        alert("失敗1");
       });
+    // axios
+    //   .get("http://localhost:3001/api/", { date: date })
+    //   .then((results) => {
+    //     results.data.forEach((res) => {
+    //       console.log(res["11~12_1"]);
+    //     });
+    //   })
+    //   .catch(() => {
+    //     alert("失敗");
+    //   });
+    return res_data;
   });
-  return { getTrafficVolume, totalCars, totalCarType, totalCarDirection };
+  return { getTrafficVolume };
 };
