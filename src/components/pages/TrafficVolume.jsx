@@ -32,14 +32,11 @@ import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as dfd from "danfojs";
 import {
-  LineChart,
-  Line,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
   Legend,
-  ComposedChart,
   Bar,
   BarChart,
 } from "recharts";
@@ -99,7 +96,7 @@ export const TrafficVolume = memo(() => {
             グラフを表示する
           </Button>
           <TableContainer>
-            <Table variant="simple" bg="gray.50">
+            <Table variant="striped" colorScheme="teal" bg="gray.50">
               <TableCaption>{`合計(${location.state.data.length})`}</TableCaption>
               <Thead>
                 <Tr>

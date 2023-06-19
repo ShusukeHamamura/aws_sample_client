@@ -5,9 +5,9 @@ export const useTraffic = () => {
   const getTrafficVolume = useCallback((props) => {
     const { date, location } = props;
     const res_data = axios
-      .post("http://localhost:3001/api/test", {
+      .post("http://localhost:3001/api", {
         date: date,
-        device_id: location,
+        location: location,
       })
       .then((results) => {
         return results.data;
